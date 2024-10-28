@@ -99,7 +99,7 @@ class TestExecutor(unittest.TestCase):
             sensor_data = executor.run_simulation("input.h5", "output.h5", "options")
 
         normalized_path = os.path.normpath(self.execution_options.binary_path)
-        expected_command = f"{self.execution_options.system_string} " f"{normalized_path} " f"-i input.h5 " f"-o output.h5 " f"options"
+        expected_command = f"{self.execution_options.system_string}" f'"{normalized_path}" -i input.h5 ' f"-o output.h5 " f"options"
 
         self.mock_popen.assert_called_once_with(expected_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
         self.mock_proc.communicate.assert_called_once()
@@ -144,7 +144,7 @@ class TestExecutor(unittest.TestCase):
         self.mock_h5py_file.assert_called_once_with("/fake/output.h5", "r")
         mock_file.keys.assert_called_once()
         mock_file.__getitem__.assert_called_once_with("/data")
-        mock_dataset.__getitem__.assert_called_once_with(0)
+        mock_dataset.__getitem__.assert_called_once_with(slice(None))
         mock_dataset.__getitem__.return_value.squeeze.assert_called_once()
         self.assertIn("data", result)
         self.assertTrue(np.all(result["data"] == np.ones((10, 10))))
